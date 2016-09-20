@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:context="http://www.springframework.org/schema/context" xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="
+			   http://www.springframework.org/schema/beans 
+			   http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+			   http://www.springframework.org/schema/context 
+			   http://www.springframework.org/schema/context/spring-context-3.2.xsd
+			   http://www.springframework.org/schema/aop 
+			   http://www.springframework.org/schema/aop/spring-aop-3.2.xsd
+			   http://www.springframework.org/schema/tx 
+			   http://www.springframework.org/schema/tx/spring-tx-3.2.xsd">
+
+	<!-- IOC依赖注入 -->
+	<!-- 配置service层对象，向service层注入dao对象 -->
+	<bean name="memberService" class="com.briup.run.service.impl.MemberServiceImpl">
+		<property name="memberDao" ref="MemberDao"></property>
+		<property name="messengerDao" ref="MessengerDao"></property>
+	</bean>
+	<bean name="messengerService" class="com.briup.run.service.impl.MessengerServiceImpl">
+		<property name="memberDao" ref="MemberDao"></property>
+		<property name="messengerDao" ref="MessengerDao"></property>
+	</bean>
+
+	<!-- 配置hibernate的事务管理器 (切面类) -->
+	<bean name="transactionManager"
+		class="org.springframework.orm.hibernate3.HibernateTransactionManager">
+		<!-- 注入sessionFactory对象 -->
+		<property name="sessionFactory" ref="sessionFactory"></property>
+	</bean>
+
+	<!--AOP面向切面编程· -->
+	<!-- 配置事务拦截器 -->
+	<tx:advice id="transactionInterceptor" transaction-manager="transactionManager">
+		<tx:attributes>
+			<!-- *代表所有的方法 -->
+			<tx:method name="register" propagation="REQUIRED"
+				rollback-for="Throwable" />
+			<tx:method name="*" propagation="REQUIRED" rollback-for="Throwable" />
+		</tx:attributes>
+	</tx:advice>
+
+	<!-- 配置aop -->
+	<aop:config>
+		<!-- 配置切入点 -->
+		<aop:pointcut expression="execution(public * com.briup.run.service..*.*(..))"
+			id="myPointCut" />
+		<!-- 配置事务拦截器在哪一个切入点上起作用 -->
+		<aop:advisor advice-ref="transactionInterceptor"
+			pointcut-ref="myPointCut" />
+	</aop:config>
+
+</beans>

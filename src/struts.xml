@@ -1,0 +1,127 @@
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+    "http://struts.apache.org/dtds/struts-2.0.dtd">
+
+<struts>
+	<constant name="struts.devMode" value="true"></constant>
+	<constant name="struts.action.extension" value="action"></constant>
+	<constant name="struts.enable.DynamicMethodInvocation"  value="true"></constant>
+	<constant name="struts.multipart.maxSize"  value="209715200"></constant>
+
+	<!-- 可以省略下面这行 -->	
+	<constant name="struts.objectFactory" value="spring"></constant>		<!-- 与spring结合 -->
+	
+	<package name="member" extends="struts-default" namespace="/user">
+		<!-- 用户注册Action -->
+		<action name="register" class="com.briup.run.web.action.RegisterAction">
+			<result name="success">/login.jsp</result>
+			<result name="error">/register.jsp</result>
+		</action>
+		
+		<!-- 用户登陆Action -->
+		<action name="login" class="com.briup.run.web.action.LoginAction">
+			<result name="success" type="redirect">/member/activity.jsp</result>
+			<result name="error">/login.jsp</result>
+		</action>
+		
+		<!-- 用户自动登陆检查Action -->
+		<action name="checklogin" class="com.briup.run.web.action.CheckLoginAction">
+			<result name="success" type="redirect">/member/activity.jsp</result>
+			<result name="error">/login.jsp</result>
+		</action>
+		
+		<!-- 用户信息修改Action -->
+		<action name="modify" class="com.briup.run.web.action.ModifyAction">
+			<result name="success">/login.jsp</result>
+			<result name="error">/modify.jsp</result>
+		</action>
+		
+		<!-- 用户密码找回Action -->
+		<action name="passwdMissing" class="com.briup.run.web.action.PasswdMissingAction">
+			<result name="success">/login.jsp</result>
+			<result name="error">/PasswdMissing.jsp</result>
+		</action>
+		
+		<!-- 显示用户空间Action -->
+		<action name="memberSpace" class="com.briup.run.web.action.MemberSpaceAction">
+			<result name="success" type="redirect">/member/space.jsp</result>
+			<result name="error">/member/noSpace.jsp</result>
+		</action>
+		
+		<!-- 创建用户空间Action -->
+		<action name="createSpace" class="com.briup.run.web.action.CreateSpaceAction">
+			<result name="success">/member/space.jsp</result>
+			<result name="error">/member/createSpace.jsp</result>
+		</action>
+		
+	</package>
+
+	<package name="friend" extends="struts-default" namespace="/friend">
+		<!-- 用户列表Action -->
+		<action name="memberlist" class="com.briup.run.web.action.FriendAction" method="listMembers">
+			<result name="success">/messenger/memberList.jsp</result>
+			<result name="error">/messenger/memberList.jsp</result>
+		</action>
+		
+		<!-- 添加好友Action -->
+		<action name="addfriend" class="com.briup.run.web.action.FriendAction" method="addFriend">
+			<result name="success" type="chain">listfriend</result>
+			<result name="error" type="chain">memberlist</result>
+		</action>
+		
+		<!-- 好友列表Action -->
+		<action name="listfriend" class="com.briup.run.web.action.FriendAction" method="listFriend">
+			<result name="success">/messenger/buddyList.jsp</result>
+		</action>
+		
+		<!-- 好友匹配Action -->
+		<action name="matchfriend" class="com.briup.run.web.action.FriendAction" method="matchFriend">
+			<result name="success">/messenger/matchFriend.jsp</result>
+		</action>
+		
+		<!-- 随机好友匹配Action -->
+		<action name="randfriend" class="com.briup.run.web.action.FriendAction" method="randFriend">
+			<result name="success">/messenger/matchFriend.jsp</result>
+		</action>
+		
+		<!-- 删除好友Action -->
+		<action name="removefriend" class="com.briup.run.web.action.FriendAction" method="removeFriend">
+			<result name="success" type="chain">listfriend</result>
+		</action>
+		
+		<!-- 黑名单列表Action -->
+		<action name="listblack" class="com.briup.run.web.action.FriendAction" method="listBlackFriend">
+			<result name="success">/messenger/blackList.jsp</result>
+		</action>
+		
+		<!-- 删除黑名单Action -->
+		<action name="removeblack" class="com.briup.run.web.action.FriendAction" method="removeBlack">
+			<result name="success" type="chain">listblack</result>
+		</action>
+		
+	</package>
+	
+	<package name="message" extends="struts-default" namespace="/message">
+		
+		<!-- 写消息Action -->
+		<action name="writemessage" class="com.briup.run.web.action.MessageAction" method="writeMessage">
+			<result name="success" type="chain">listsendmessage</result>
+		</action>
+		
+		<!-- 发件箱Action -->
+		<action name="listsendmessage" class="com.briup.run.web.action.MessageAction" method="listSendMessage">
+			<result name="success">/messenger/outbox.jsp</result>
+		</action>
+		
+		<!-- 收件箱Action -->
+		<action name="listrecievemessage" class="com.briup.run.web.action.MessageAction" method="listRecieveMessage">
+			<result name="success">/messenger/inbox.jsp</result>
+		</action>
+		
+		<!-- 显示消息Action -->
+		<action name="showmessage" class="com.briup.run.web.action.MessageAction" method="showMessage">
+			<result name="success">/messenger/view.jsp</result>
+		</action>
+		
+	</package>
+</struts>
